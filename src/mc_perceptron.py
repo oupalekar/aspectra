@@ -3,11 +3,13 @@ import numpy as np
 import sys
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+from visualize import *
 
 
 class MultiClassPerceptron():
-    def __init__(self):
+    def __init__(self, visualize = False):
          self.weights = None
+         self.visualize = visualize
 
     def load_model(self, filepath):
         self.weights = np.load(filepath)
@@ -31,6 +33,8 @@ class MultiClassPerceptron():
                     self.weights[:, y] += lr * x
             error_values.append(misclassified/X_train.shape[0])
             epoch_values.append(k)
+            
+        error_vs_epochs(error_values, epoch_values, None) if self.visualize else None
 
             
 
