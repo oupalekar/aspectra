@@ -5,7 +5,9 @@ import parse
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from kmeans import *
+import numpy as np
 from sklearn.metrics import accuracy_score
+from sklearn.cluster import KMeans
 
 
 ## ML Perceptron ##
@@ -34,15 +36,24 @@ def kmeans():
     X_train, X_val, Y_train, Y_val = train_test_split(X_train_val, Y_train_val, test_size = 0.12517)
 
     kmeans_obj = Kmeans(Y_df.shape[1], 100)
-    kmeans_obj.train(X_data=X_df)
+    # kmeans_obj.train(X_data=X_df)
     # print(kmeans_obj.labels)
     # print(np.argmax(Y_df, axis=1))
-    print(accuracy_score(kmeans_obj.labels, np.argmax(Y_df, axis = 1)))
+    # print(kmeans_obj.compute_sse(X_df, kmeans_obj.labels, kmeans_obj.centroids))
+    kmeans_obj.pca(X_df)
+    # print(accuracy_score(kmeans_obj.labels, np.argmax(Y_df, axis = 1)))
+
+    # k = KMeans(3, max_iter=100, random_state=123, n_init=10).fit(X_df)
+    # print(k.score(X_df))
+    
+    # print(k.cluster_centers_)
 
 
 
 
 if __name__ == '__main__':
     # ml_perceptron(visualize=True)
-    np.set_printoptions(threshold=sys.maxsize)
+    # np.set_printoptions(threshold=sys.maxsize)
     kmeans()
+    
+    

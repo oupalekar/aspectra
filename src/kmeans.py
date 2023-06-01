@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Kmeans():
     def __init__(self, num_classes, max_iters, random_state = 123):
@@ -45,6 +46,16 @@ class Kmeans():
             if np.all(old_centroids == self.centroids):
                 break
         self.error = self.compute_sse(X_data, self.labels, self.centroids)
+
+    def pca(self, X_data):
+        covariance_matrix = np.cov(X_data.T)
+        # print(covariance_matrix)
+        eigvals, eigvecs =  np.linalg.eig(covariance_matrix)
+        pca = np.sort(eigvals.real/np.sum(eigvals))[::-1]
+        plt.bar([f'pc{i}' for i in range(1, len(pca) + 1)], pca.real)
+        plt.savefig('results/kmeans_pca')
+        # print(pca)
+
 
 
 
