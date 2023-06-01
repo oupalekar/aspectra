@@ -33,10 +33,8 @@ class MultiClassPerceptron():
                     self.weights[:, y] += lr * x
             error_values.append(misclassified/X_train.shape[0])
             epoch_values.append(k)
-            
-        error_vs_epochs(error_values, epoch_values, None) if self.visualize else None
 
-            
+        error_vs_epochs(error_values, epoch_values, None) if self.visualize else None
 
     def predict_class(self, X_predict, Y_predict):
         predicted_class = np.zeros((X_predict.shape[0], Y_predict.shape[1]))

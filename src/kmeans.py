@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 class Kmeans():
     def __init__(self, num_classes, max_iters, random_state = 123):
@@ -49,12 +50,14 @@ class Kmeans():
 
     def pca(self, X_data):
         covariance_matrix = np.cov(X_data.T)
-        # print(covariance_matrix)
         eigvals, eigvecs =  np.linalg.eig(covariance_matrix)
         pca = np.sort(eigvals.real/np.sum(eigvals))[::-1]
         plt.bar([f'pc{i}' for i in range(1, len(pca) + 1)], pca.real)
-        plt.savefig('results/kmeans_pca')
-        # print(pca)
+
+        named_tuple = time.localtime() # get struct_time
+        time_string = time.strftime("(%m-%d-%Y-%H:%M:%S)", named_tuple)
+
+        plt.savefig(f'results/kmeans_pca{time_string}')
 
 
 
