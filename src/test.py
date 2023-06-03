@@ -1,5 +1,5 @@
 import sys
-import mc_perceptron
+import perceptron
 import utils
 import parse
 from sklearn.preprocessing import MinMaxScaler
@@ -18,7 +18,7 @@ def ml_perceptron(visualize = False):
     X_train_val, X_test, Y_train_val, Y_test = train_test_split(X_df, Y_df, test_size=0.2)
     X_train, X_val, Y_train, Y_val = train_test_split(X_train_val, Y_train_val, test_size = 0.12517)
 
-    mc_perceptron_obj = mc_perceptron.MultiClassPerceptron(visualize=visualize)
+    mc_perceptron_obj = perceptron.MultiClassPerceptron(visualize=visualize)
 
     mc_perceptron_obj.train(X_train, Y_train, 500)
     mc_perceptron_obj.save_model("./models/mc_perceptron_objv1")
@@ -35,24 +35,51 @@ def kmeans():
     X_train_val, X_test, Y_train_val, Y_test = train_test_split(X_df, Y_df, test_size=0.2)
     X_train, X_val, Y_train, Y_val = train_test_split(X_train_val, Y_train_val, test_size = 0.12517)
 
-    kmeans_obj = Kmeans(Y_df.shape[1], 100)
-    # kmeans_obj.train(X_data=X_df)
-    # print(kmeans_obj.labels)
-    # print(np.argmax(Y_df, axis=1))
-    # print(kmeans_obj.compute_sse(X_df, kmeans_obj.labels, kmeans_obj.centroids))
-    kmeans_obj.pca(X_df)
-    # print(accuracy_score(kmeans_obj.labels, np.argmax(Y_df, axis = 1)))
+    kmeans_obj = Kmeans(Y_df.shape[1], 100, 64)
+    # kmeans_obj.train(X_df, Y_df)
 
-    # k = KMeans(3, max_iter=100, random_state=123, n_init=10).fit(X_df)
-    # print(k.score(X_df))
+    # print(kmeans_obj.compute_sse(X_df, kmeans_obj.labels, kmeans_obj.centroids))
+    # print(accuracy_score(kmeans_obj.labels, np.argmax(Y_df, axis = 1)))
+    pca_vec = kmeans_obj.pca(X_df)
+    pca_data_set = pca_vec.T @ X_df.T
+    print(pca_data_set.shape)
+
+    # kmeans_obj = KMeans(Y_df.shape[1], max_iter=10, random_state=43, init="random")
+    # kmeans_obj.fit(pca_data_set.T.real)
+    # print(kmeans_obj.score(pca_data_set.T.real))
+    # print(kmeans_obj.labels_, np.argmax(Y_df, axis=1))
+    # print(kmeans_obj.cluster_centers_, np.argmax(Y_df, axis=1))
+    kmeans_obj = Kmeans(Y_df.shape[1], 100, 64)
+    kmeans_obj.train(pca_data_set.T, Y_df)
+
+    print(kmeans_obj.compute_sse(pca_data_set.T, kmeans_obj.labels, kmeans_obj.centroids))
+    print(accuracy_score(kmeans_obj.labels, np.argmax(Y_df, axis = 1)))
+    # print(kmeans_obj.labels)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+    for i in range(len(kmeans_obj.labels)):
+        if kmeans_obj.labels[i] == 0:
+            color_val = 'red'
+        elif kmeans_obj.labels[i] == 1:
+            color_val = 'blue'
+        else:
+            color_val = 'green'
+        ax.scatter(pca_data_set[0,i], pca_data_set[1,i], pca_data_set[2,i], marker='o', color = color_val, alpha=0.1)
+    ax.set_xlabel('$x$', rotation=150)
+    ax.set_ylabel('$y$')
+    ax.set_zlabel('$z$',rotation=60)
+    ax.scatter(kmeans_obj.centroids[:,0], kmeans_obj.centroids[:,1], kmeans_obj.centroids[:,2], marker ='o', color="black")
+    plt.savefig(f'results/kmeans_pca_scatter')
+    # plt.show()
+
     
-    # print(k.cluster_centers_)
 
 
 
 
 if __name__ == '__main__':
-    # ml_perceptron(visualize=True)
+    # ml_perceptron(visualize=False)
     # np.set_printoptions(threshold=sys.maxsize)
     kmeans()
     
